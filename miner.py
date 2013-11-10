@@ -62,7 +62,7 @@ def update_via_hn(sleep_time = 1):
 		data_file.write(json.dumps(story) + '\n')
 		download_story(story['story_id'], story['link'], date_code)
 
-def begin_regular_updates():
+def begin_regular_updates(minutes_interval=5):
 	try:
 		os.makedirs('./stories')
 	except:
@@ -76,7 +76,7 @@ def begin_regular_updates():
 	while True:
 		print "Refreshing HN data..."
 		update_via_hn()
-		print "Sleeping for 1 minute."
-		time.sleep(60)
+		print "Sleeping for " + str(minutes_interval) + " minutes."
+		time.sleep(minutes_interval*60)
 
 begin_regular_updates()
