@@ -31,7 +31,7 @@ def download_story(story_id, url, date_code, sleep_time = 1):
 			time.sleep(sleep_time)
 			if sleep_time >= 4:
 				return
-			download_story(story_id, url, sleep_time = sleep_time*2)
+			download_story(story_id, url, date_code, sleep_time = sleep_time*2)
 
 def update_via_hn(sleep_time = 1):
 	current_time = datetime.now()
