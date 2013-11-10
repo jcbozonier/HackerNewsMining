@@ -6,8 +6,13 @@ import json
 import os
 import time
 
-def download_story(story_id, url, sleep_time = 1):
-	story_file_path = './stories/' + str(story_id) + '.html'
+def download_story(story_id, url, date_code, sleep_time = 1):
+	stories_folder_path = './stories/' + date_code
+	try:
+		os.makedirs(stories_folder_path)
+	except:
+		""" Nothing """
+	story_file_path = stories_folder_path + '/' + str(story_id) + '.html'
 	if not os.path.exists(story_file_path):
 		print "Downloading story " + str(story_id) + " from url " + url
 		print "Sleeping for " + str(sleep_time) + " seconds."
@@ -30,7 +35,8 @@ def download_story(story_id, url, sleep_time = 1):
 
 def update_via_hn(sleep_time = 1):
 	current_time = datetime.now()
-	data_file_path = './article_metadata/today.json'
+	date_code = current_time.strftime('%Y%m%d')
+	data_file_path = './story_metadata/story_log_' + date_code + '.json'
 	data_file = open(data_file_path, 'a')
 	hackernews = HN()
 	
@@ -44,18 +50,29 @@ def update_via_hn(sleep_time = 1):
 			update_via_hn(sleep_time = sleep_time*2)
 		return
 
+	print "Logging story statuses"
 	for story in front_page_stories:
 		story['is_front_page'] = True
 		story['timestamp'] = str(current_time)
 		data_file.write(json.dumps(story) + '\n')
-		download_story(story['story_id'], story['link'])
+		download_story(story['story_id'], story['link'], date_code)
 	for story in new_stories:
 		story['is_front_page'] = False
 		story['timestamp'] = str(current_time)
 		data_file.write(json.dumps(story) + '\n')
-		download_story(story['story_id'], story['link'])
+		download_story(story['story_id'], story['link'], date_code)
 
 def begin_regular_updates():
+	try:
+		os.makedirs('./stories')
+	except:
+		print "Stories directory already exists"
+
+	try:
+		os.makedirs('./story_metadata')
+	except:
+		print "Story metadata directory already exists"
+
 	while True:
 		print "Refreshing HN data..."
 		update_via_hn()
