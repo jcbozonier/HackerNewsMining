@@ -15,12 +15,11 @@ def download_story(story_id, url, date_code, sleep_time = 1):
 	story_file_path = stories_folder_path + '/' + str(story_id) + '.html'
 	if not os.path.exists(story_file_path):
 		print "Downloading story " + str(story_id) + " from url " + url
-		print "Sleeping for " + str(sleep_time) + " seconds."
 		try:
 			cj = cookielib.CookieJar()
 			opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 			opener.addheaders = [('User-agent', 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25')]
-			story_response = opener.open(url)
+			story_response = opener.open(url, timeout=5)
 			#print(story_response.info())
 			story_text = story_response.read()
 			story_response.close()
@@ -28,6 +27,7 @@ def download_story(story_id, url, date_code, sleep_time = 1):
 			story_file.write(story_text)
 		except Exception, err:
 			print err
+			print "Sleeping for " + str(sleep_time) + " seconds."
 			time.sleep(sleep_time)
 			if sleep_time >= 4:
 				return
@@ -41,7 +41,9 @@ def update_via_hn(sleep_time = 1):
 	hackernews = HN()
 	
 	try:
+		print "Getting front page stories..."
 		front_page_stories = hackernews.get_stories()
+		print "Getting new stories..."
 		new_stories = hackernews.get_stories(story_type='newest')
 	except Exception, err:
 		if sleep_time <= 8:
