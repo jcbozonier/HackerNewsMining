@@ -64,7 +64,7 @@ def update_via_hn(sleep_time = 1):
 		data_file.write(json.dumps(story) + '\n')
 		download_story(story['story_id'], story['link'], date_code)
 
-def begin_regular_updates(minutes_interval=5):
+def begin_regular_updates(minutes_interval=1):
 	try:
 		os.makedirs('./stories')
 	except:
